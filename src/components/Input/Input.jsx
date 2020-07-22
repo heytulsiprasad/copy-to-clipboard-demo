@@ -8,22 +8,57 @@ class Input extends Component {
 			copyMsg: "Copy to Clipboard",
 			isCopied: false,
 		};
-		this.inputRef = createRef();
+		this.inputRef = createRef(); // targets the input we are gonna copy
 	}
 
+	// handles change in input element
 	inputHandler = (e) => {
 		this.setState({ [e.target.name]: e.target.value });
 	};
 
-	submitHandler = (e) => {
-		e.preventDefault();
-		alert(`Welcome ${this.state.name} 🎉`);
-	};
+	////////////// APPROACH 1
 
+	// copies using execCommand which is going to be deprecated
 	copyToClipboard = (e) => {
 		this.inputRef.current.select();
 		document.execCommand("copy");
 		e.target.focus();
+		this.setState((state) => ({
+			...state,
+			copyMsg: "Copied!",
+			isCopied: true,
+		}));
+
+		// to change the copy button text sometime after copying
+		setTimeout(() => {
+			this.setState((state) => ({
+				...state,
+				copyMsg: "Copy to Clipboard!",
+				isCopied: false,
+			}));
+		}, 3000);
+	};
+
+	////////////// APPROACH 2
+
+	// copies using the clipboard API (modern approach)
+	newCopyToClip = (e) => {
+		navigator.clipboard.writeText(this.state.name);
+
+		this.setState((state) => ({
+			...state,
+			copyMsg: "Copied!",
+			isCopied: true,
+		}));
+
+		// to change the copy button text sometime after copying
+		setTimeout(() => {
+			this.setState((state) => ({
+				...state,
+				copyMsg: "Copy to Clipboard!",
+				isCopied: false,
+			}));
+		}, 3000);
 	};
 
 	render() {
@@ -39,19 +74,9 @@ class Input extends Component {
 						value={this.state.name}
 						onChange={this.inputHandler}
 					/>
-					<button type="button" onClick={this.copyToClipboard}>
-						Copy To Clipboard
+					<button type="button" onClick={this.newCopyToClip}>
+						{this.state.copyMsg}
 					</button>
-					<button type="submit">Shout Out</button>
-				</form>
-				<form>
-					<label htmlFor="paster">You can try pasting here!!!</label>
-					<input
-						type="text"
-						name="paster"
-						value={this.state.paster}
-						onChange={this.inputHandler}
-					/>
 				</form>
 			</div>
 		);

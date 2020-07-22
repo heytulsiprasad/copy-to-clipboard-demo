@@ -4,9 +4,9 @@ import Input from "./components/Input/Input";
 
 function App() {
 	return (
-		<Fragment>
+		<div className="App">
 			<Input />
-		</Fragment>
+		</div>
 	);
 }
 
